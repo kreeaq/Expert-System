@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SEiED_1.Model
 {
-    public class Fact
+    class Predicate
     {
         public string Name { get; set; }
         public bool Value { get; set; }

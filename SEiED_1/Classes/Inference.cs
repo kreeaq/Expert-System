@@ -13,14 +13,33 @@ namespace SEiED_1.Classes
         {
             foreach(Rule rule in rules)
             {
+                //Sprawdz czy regula jest wykonywalna
                 bool result = true;
                 foreach(Fact fact in rule.Facts)
                 {
-                    result = result && fact.Value;
+                    if (fact.IsKnown)
+                    {
+                        result = result && fact.Value;
+                    }
+                    else
+                    {
+                        rule.ToSkip = true;
+                        break;
+                    }
                 }
                 foreach(Conclusion conclusion in rule.Conclusions)
                 {
                     conclusion.Value = result;
+                    foreach (Rule rule in rules)
+                    {
+                        foreach(Fact fact in rule)
+                        {
+                            if (fact.Name == conclusion.Name)
+                            {
+                                fact.Value = conclusion.Value;
+                            }
+                        }
+                    }
                 }
             }
         }

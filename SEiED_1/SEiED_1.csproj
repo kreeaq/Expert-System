@@ -71,8 +71,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Inference.cs" />
+    <Compile Include="Classes\Parser.cs" />
     <Compile Include="Model\Conclusion.cs" />
     <Compile Include="Model\Fact.cs" />
+    <Compile Include="Model\Predicate.cs" />
     <Compile Include="Model\Rule.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />

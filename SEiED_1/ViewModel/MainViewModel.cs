@@ -26,6 +26,7 @@ namespace SEiED_1.ViewModel
     {
 
         public RelayCommand StartProcessCommand { get; private set; }
+        public RelayCommand LoadFileCommand { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -43,6 +44,7 @@ namespace SEiED_1.ViewModel
             ///
 
             StartProcessCommand = new RelayCommand(StartProcess);
+            LoadFileCommand = new RelayCommand(LoadFile);
         }
 
         private string _filePath;
@@ -57,9 +59,9 @@ namespace SEiED_1.ViewModel
             }
         }
 
-        private string _facts;
+        private List<Fact> _facts;
 
-        public string Facts
+        public List<Fact> Facts
         {
             get { return _facts; }
             set
@@ -69,9 +71,9 @@ namespace SEiED_1.ViewModel
             }
         }
 
-        private string _conclusions;
+        private List<Conclusion> _conclusions;
 
-        public string Conclusions
+        public List<Conclusion> Conclusions
         {
             get { return _conclusions; }
             set
@@ -81,40 +83,60 @@ namespace SEiED_1.ViewModel
             }
         }
 
-        StackPanel stackPanel;
 
+        List<Rule> rules; 
+
+        private void LoadFile()
+        {
+            rules = Parser.Parse(@"C:\Users\Maciej Kuœnierz\source\repos\SEiED_1\SEiED_1\Resources\BazaWiedzy.txt");
+            FactsToBool(rules);
+        }
+
+        StackPanel stackPanel;
+        StackPanel stackPanel1;
 
         private void StartProcess()
         {
-            
-            Facts = "";
-            Conclusions = "";
-            List<Rule> rules = Parser(@"C:\Users\Maciej Kuœnierz\source\repos\SEiED_1\SEiED_1\Resources\BazaWiedzy.txt");
-            FactsToBool(rules);
             Inference.Calculate(rules);
             stackPanel = new StackPanel
-            {
-                
+            {  
                 Orientation = Orientation.Vertical
             };
 
+            stackPanel1 = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+
+            List<Fact> tmpFacts = new List<Fact>();
+            List<Conclusion> tmpConclusions= new List<Conclusion>();
             foreach (Rule rule in rules)
-            {                
+            {
                 foreach (Fact fact in rule.Facts)
                 {
-                    CheckBox cb = new CheckBox();
-                    //cb.Name = fact.Name.ToString();
-                    //cb.Content = fact.Name.ToString();
-                    cb.IsChecked = fact.Value;
-                    stackPanel.Children.Add(cb);
+                    if (CheckFact(fact.Name))
+                    {
+                        CheckBox cb = new CheckBox();
+                        cb.IsChecked = fact.Value;
+                        stackPanel.Children.Add(cb);
 
-                    Facts += fact.Name + "=" + fact.Value.ToString() +  '\n';
+                        tmpFacts.Add(fact);
+                    }
                 }
                 foreach (Conclusion conclusion in rule.Conclusions)
                 {
-                    Conclusions += conclusion.Name + "=" + conclusion.Value.ToString() + '\n';
+                    CheckBox cb = new CheckBox();
+                    cb.IsChecked = conclusion.Value;
+                    stackPanel1.Children.Add(cb);
+
+                    tmpConclusions.Add(conclusion);
+                    
+                    //Conclusions += conclusion.Name + "=" + conclusion.Value.ToString() + '\n';
                 }
             }
+            Facts = new List<Fact>(tmpFacts);
+            Conclusions = new List<Conclusion>(tmpConclusions);
         }
 
         private void FactsToBool(List<Rule> rules)
@@ -124,66 +146,24 @@ namespace SEiED_1.ViewModel
             rules[0].Facts[1].Value = false;
             rules[0].Facts[2].Value = true;
             rules[1].Facts[0].Value = false;
-            rules[1].Facts[1].Value = true;
+            //rules[1].Facts[1].Value = true;
 
             return;
         }
 
-        private List<Rule> Parser(string filePath)
+        
+
+        private bool CheckFact(string it)
         {
-            String line;
-            List<Rule> rules = new List<Rule>();
-            try
+            foreach (Rule rule in rules)
             {
-                //Pass the file path and file name to the StreamReader constructor
-                StreamReader sr = new StreamReader(filePath);
-
-                //Read the first line of text
-                line = sr.ReadLine();
-                line = line.Replace(" ", "");
-
-                //Continue to read until you reach end of file
-                while (line != null)
+                foreach(Conclusion conclusion in rule.Conclusions)
                 {
-                    Rule rule = new Rule
-                    {
-                        Facts = new List<Fact>(),
-                        Conclusions = new List<Conclusion>()
-                    };
-                    string[] splittedLine = line.Split(new string[] { "->" }, StringSplitOptions.None);
-                    foreach (var it in splittedLine[0].Split(','))
-                    {
-                        Fact fact = new Fact
-                        {
-                            Name = it
-                        };
-                        rule.Facts.Add(fact);
-                    }
-                    foreach (var it in splittedLine[1].Split(','))
-                    {
-                        Conclusion conclusion = new Conclusion
-                        {
-                            Name = it
-                        };
-                        rule.Conclusions.Add(conclusion);
-                    }
-             
-
-                    //Add rule to rules
-                    rules.Add(rule);
-
-                    //Read the next line
-                    line = sr.ReadLine();
+                    if (conclusion.Name == it)
+                        return false;
                 }
-
-                //close the file
-                sr.Close();
             }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            return rules;
+            return true;
         }
     }
 }
