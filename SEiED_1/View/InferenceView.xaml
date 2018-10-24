@@ -14,6 +14,6 @@
 
     <Grid>
         <Label Content="Perform inference!" FontSize="20" HorizontalAlignment="Center"/>
-        <Button Name="StartButton"  Grid.Row="3" Grid.Column="1" Content="Start process!" Command="{Binding Path=StartProcessCommand}"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="75"/>
+        <Button Name="StartButton"  Grid.Row="3" Grid.Column="1" Content="Start process!" Command="{Binding Path=StartProcessCommand}"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="Auto"/>
     </Grid>
 </UserControl>
