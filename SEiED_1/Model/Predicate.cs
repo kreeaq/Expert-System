@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace SEiED_1.Model
 {
-    class Predicate
+    public class Predicate
     {
         public string Name { get; set; }
-        public bool Value { get; set; }
-        public bool IsKnown { get; set; }
+        public bool Value { get; set; } = false;
     }
 }

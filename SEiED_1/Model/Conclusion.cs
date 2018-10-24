@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace SEiED_1.Model
 {
-    public class Conclusion
+    public class Conclusion : Predicate
     {
-        public string Name { get; set; }
-        public bool Value { get; set; }
+        public bool IsKnown { get; set; } = true;
     }
 }
