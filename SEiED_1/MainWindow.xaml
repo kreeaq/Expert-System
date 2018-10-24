@@ -5,20 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SEiED_1"
         xmlns:vm="clr-namespace:SEiED_1.ViewModel"
+        xmlns:view="clr-namespace:SEiED_1.View"
+        xmlns:conv="clr-namespace:SEiED_1.Converter"
         mc:Ignorable="d"
         AllowDrop="True"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        DataContext="{StaticResource SharedMainViewModel}">
 
-    <Window.DataContext>
-        <vm:MainViewModel></vm:MainViewModel>
-    </Window.DataContext>
-    
-    <Grid>
+    <Window.Resources>
+        <DataTemplate x:Key="PickUpFileViewTemplate" DataType="{x:Type vm:MainViewModel}">
+            <view:PickUpFileView/>
+        </DataTemplate>
+        <DataTemplate x:Key="InferenceViewTemplate" DataType="{x:Type vm:MainViewModel}">
+            <view:InferenceView/>
+        </DataTemplate>
+        <Style x:Key="TopPanelLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontStyle" Value="Italic" />
+        </Style>
+        <Style x:Key="TopToogleButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Coral" />
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontStyle" Value="Italic" />
+        </Style>
+        <conv:BoolToOpacityConverter x:Key="BoolToOpacityConverter"/>
+        <conv:IntToOpacityConverter x:Key="IntToOpacityConverter"/>
+    </Window.Resources>
+
+    <Grid Focusable="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -26,9 +46,32 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Path to file:"/>
-        <Label Grid.Row="0" Grid.Column="1" Content="Facts:"/>
-        <Label Grid.Row="0" Grid.Column="2" Content="Conclusions:"/>
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!--TODO: Make IsCurrentStepToOpacityConverter-->
+            <Button Style="{StaticResource TopToogleButtonStyle}"  Opacity="{Binding CurrentView, Converter={StaticResource IntToOpacityConverter}}" Grid.Column="0" VerticalAlignment="Stretch"/>
+            <TextBlock  Style="{StaticResource TopPanelLabelStyle}" Grid.Column="0" Text="1. Pick up a file" HorizontalAlignment="Center"/>
+            <Button Style="{StaticResource TopToogleButtonStyle}" Opacity="{Binding IsPreviousStepEnabled, Converter={StaticResource BoolToOpacityConverter}}" Grid.Column="1" VerticalAlignment="Stretch"/>
+            <TextBlock  Style="{StaticResource TopPanelLabelStyle}" Grid.Column="1" Text="2. Perform inference" HorizontalAlignment="Center"/>
+        </Grid>
+        
+        
+
+        <ContentControl Grid.Row="1" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Content="{Binding }" >
+            <ContentControl.Style>
+                <Style TargetType="{x:Type ContentControl}">
+                    <Setter Property="ContentTemplate" Value="{StaticResource PickUpFileViewTemplate}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentView}" Value="1">
+                            <Setter Property="ContentTemplate" Value="{StaticResource InferenceViewTemplate}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>     
+        </ContentControl>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Text="{Binding Path=FilePath, Mode=TwoWay}"/>
         <ItemsControl x:Name="FactsStack" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch"  ItemsSource="{Binding Facts, Mode=TwoWay}">
@@ -60,9 +103,9 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        
-        <Button Name="LoadFileButton"  Grid.Row="3" Grid.Column="0" Content="Load file!" Command="{Binding Path=LoadFileCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75"/>
-        <Button Name="StartButton"  Grid.Row="3" Grid.Column="1" Content="Start process!" Command="{Binding Path=StartProcessCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75"/>
+
+        <Button x:Name="PreviousBtn"  Grid.Row="4" Grid.Column="0" Content="Previous step" Command="{Binding PreviousStepCommand}" IsEnabled="{Binding IsPreviousStepEnabled, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="30"/>
+        <Button x:Name="NextBtn"  Grid.Row="4" Grid.Column="2" Content="Next step" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsNextStepEnabled, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="30"/>
 
     </Grid>
 </Window>

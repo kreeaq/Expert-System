@@ -4,7 +4,10 @@ using SEiED_1.Classes;
 using SEiED_1.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -26,7 +29,9 @@ namespace SEiED_1.ViewModel
     {
 
         public RelayCommand StartProcessCommand { get; private set; }
-        public RelayCommand LoadFileCommand { get; private set; }
+        public RelayCommand PreviousStepCommand { get; private set; }
+        public RelayCommand NextStepCommand { get; private set; }
+        public RelayCommand<object> DragDropCommand { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -44,18 +49,21 @@ namespace SEiED_1.ViewModel
             ///
 
             StartProcessCommand = new RelayCommand(StartProcess);
-            LoadFileCommand = new RelayCommand(LoadFile);
+            PreviousStepCommand = new RelayCommand(PreviousStep);
+            NextStepCommand = new RelayCommand(NextStep);
+            DragDropCommand = new RelayCommand<object>((x) => DragDrop(x));
+            CurrentView = 0;
         }
 
-        private string _filePath;
+        private int _currentView = 0;
 
-        public string FilePath
+        public int CurrentView
         {
-            get { return _filePath; }
+            get { return _currentView; }
             set
             {
-                _filePath = value;
-                RaisePropertyChanged("FilePath");
+                _currentView = value;
+                RaisePropertyChanged("CurrentView");
             }
         }
 
@@ -83,13 +91,95 @@ namespace SEiED_1.ViewModel
             }
         }
 
+        private bool _isPreviousStepEnabled = false;
+
+        public bool IsPreviousStepEnabled
+        {
+            get { return _isPreviousStepEnabled; }
+            set
+            {
+                _isPreviousStepEnabled = value;
+                RaisePropertyChanged("IsPreviousStepEnabled");
+            }
+        }
+
+        private bool _isNextStepEnabled = false;
+
+        public bool IsNextStepEnabled
+        {
+            get { return _isNextStepEnabled; }
+            set
+            {
+                _isNextStepEnabled = value;
+                RaisePropertyChanged("IsNextStepEnabled");
+            }
+        }
+
+        private string _windowText = "Drop file here";
+
+        public string WindowText
+        {
+            get { return _windowText; }
+            set
+            {
+                _windowText = value;
+                RaisePropertyChanged("WindowText");
+            }
+        }
+
+        private void PreviousStep()
+        {
+            CurrentView--;
+            IsNextStepEnabled = true;
+            IsPreviousStepEnabled = false;
+        }
+
+        private bool fileDroppedCorrectly = false;
+        private void NextStep()
+        {
+            if (fileDroppedCorrectly)
+            {
+                CurrentView++;
+                IsNextStepEnabled = false;
+                IsPreviousStepEnabled = true;
+            }
+            else
+            {
+                MessageBox.Show("First specify knowledge database");
+            }
+        }
+
+        private void DragDrop(object args)
+        {
+            DragEventArgs DEA = args as DragEventArgs;
+            string filePath = "";
+            if (DEA.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // Note that you can have more than one file.
+                filePath = ((string[])DEA.Data.GetData(DataFormats.FileDrop)).FirstOrDefault();
+
+                FileInfo FI = new FileInfo(filePath);
+
+                if (!FI.Extension.Contains("txt"))
+                {
+                    MessageBox.Show("Dropped file has wrong extension!");
+                    return;
+                }
+                WindowText = filePath;
+                fileDroppedCorrectly = true;
+                LoadFile(filePath);
+            }
+        }
+
 
         List<Rule> rules; 
 
-        private void LoadFile()
+        private void LoadFile(string filePath)
         {
-            rules = Parser.Parse(@"C:\Users\Maciej Kuœnierz\source\repos\SEiED_1\SEiED_1\Resources\BazaWiedzy.txt");
+            rules = Parser.Parse(filePath);
             FactsToBool(rules);
+            //TODO: Why this stupid binding not working????
+            IsNextStepEnabled = true;
         }
 
         StackPanel stackPanel;
