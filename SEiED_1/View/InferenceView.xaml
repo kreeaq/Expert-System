@@ -6,14 +6,59 @@
       xmlns:local="clr-namespace:SEiED_1.View"
       xmlns:vm="clr-namespace:SEiED_1.ViewModel"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800">
-
-    <UserControl.DataContext>
-        <vm:MainViewModel></vm:MainViewModel>
-    </UserControl.DataContext>
+      d:DesignHeight="450" d:DesignWidth="800"
+      DataContext="{StaticResource SharedMainViewModel}">
 
     <Grid>
-        <Label Content="Perform inference!" FontSize="20" HorizontalAlignment="Center"/>
-        <Button Name="StartButton"  Grid.Row="3" Grid.Column="1" Content="Start process!" Command="{Binding Path=StartProcessCommand}"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="Auto"/>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Perform inference!" FontSize="20" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Facts:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Label Grid.Row="1" Grid.Column="1" Content="Conclusions:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <ItemsControl x:Name="FactsStack" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch"  ItemsSource="{Binding Facts, Mode=TwoWay}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="{Binding Path=Name}"/>
+                        <CheckBox Grid.Column="1" IsChecked="{Binding Path=Value, Mode=TwoWay}" Command="{Binding ElementName=FactsStack, Path=DataContext.StartProcessCommand}"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ItemsControl x:Name="ConclusionsStack" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" HorizontalAlignment="Stretch"  ItemsSource="{Binding Conclusions, Mode=TwoWay}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="{Binding Path=Name}"/>
+                        <CheckBox Grid.Column="1" IsChecked="{Binding Path=Value, Mode=TwoWay}" IsEnabled="False"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>

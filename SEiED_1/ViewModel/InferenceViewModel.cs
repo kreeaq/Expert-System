@@ -13,5 +13,11 @@ namespace SEiED_1.ViewModel
     class InferenceViewModel : ViewModelBase
     {
 
+        public InferenceViewModel()
+        {
+
+
+        }
+
     }
 }

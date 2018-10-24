@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace SEiED_1.Classes
 {
@@ -30,28 +31,46 @@ namespace SEiED_1.Classes
                     Rule rule = new Rule
                     {
                         ID = ruleID,
-                        Facts = new List<Fact>(),
-                        Conclusions = new List<Conclusion>()
+                        Facts = new List<Predicate>(),
+                        Conclusions = new List<Predicate>()
                     };
                     string[] splittedLine = line.Split(new string[] { "->" }, StringSplitOptions.None);
                     foreach (var it in splittedLine[0].Split(','))
                     {
-                        Fact fact = new Fact
+                        if (!rules.Any(x => x.Facts.Any(f => f.Name == it)))
                         {
-                            Name = it
-                        };
-                        rule.Facts.Add(fact);
+                            Fact fact = new Fact
+                            {
+                                Name = it
+                            };
+                            rule.Facts.Add(fact);
+                        }
+                        else
+                        {
+                            rule.Facts.Add(rules.Where(r => r.Facts.FirstOrDefault(f => f.Name == it) != null).Select(r => r.Facts.Single(f => f.Name == it)).Single());
+                        }                        
                     }
                     foreach (var it in splittedLine[1].Split(','))
                     {
-                        Conclusion conclusion = new Conclusion
+                        if (!rules.Any(x => x.Facts.Any(f => f.Name == it) && !rules.Any(r => r.Conclusions.Any(c => c.Name == it))))
                         {
-                            Name = it
-                        };
-                        rule.Conclusions.Add(conclusion);
+                            Conclusion conclusion = new Conclusion
+                            {
+                                Name = it
+                            };
+                            rule.Conclusions.Add(conclusion);
+                        }
+                        else if (rules.Any(x => x.Facts.Any(f => f.Name == it)))
+                        {
+                            //Predicate that parser read as a Conclusion is already a Fact!
+                            rule.Conclusions.Add(rules.Where(r => r.Facts.FirstOrDefault(f => f.Name == it) != null).Select(r => r.Facts.Single(f => f.Name == it)).Single());
+                        }
+                        else if (rules.Any(r => r.Conclusions.Any(c => c.Name == it)))
+                        {
+                            //Predicate that parser read as a Conclusion is already a Conclusion somewhere!
+                            rule.Conclusions.Add(rules.Where(r => r.Conclusions.FirstOrDefault(c => c.Name == it) != null).Select(r => r.Conclusions.Single(c => c.Name == it)).Single());
+                        }
                     }
-
-
                     //Add rule to rules
                     rules.Add(rule);
 
@@ -64,7 +83,7 @@ namespace SEiED_1.Classes
             }
             catch (Exception e)
             {
-                //HWDPMessageBox.Show(e.Message);
+                MessageBox.Show(e.Message);
             }
             return rules;
         }

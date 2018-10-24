@@ -38,16 +38,6 @@ namespace SEiED_1.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
-            ///
-
             StartProcessCommand = new RelayCommand(StartProcess);
             PreviousStepCommand = new RelayCommand(PreviousStep);
             NextStepCommand = new RelayCommand(NextStep);
@@ -142,10 +132,7 @@ namespace SEiED_1.ViewModel
                 CurrentView++;
                 IsNextStepEnabled = false;
                 IsPreviousStepEnabled = true;
-            }
-            else
-            {
-                MessageBox.Show("First specify knowledge database");
+                StartProcess();
             }
         }
 
@@ -163,11 +150,17 @@ namespace SEiED_1.ViewModel
                 if (!FI.Extension.Contains("txt"))
                 {
                     MessageBox.Show("Dropped file has wrong extension!");
+                    fileDroppedCorrectly = false;
                     return;
                 }
                 WindowText = filePath;
                 fileDroppedCorrectly = true;
                 LoadFile(filePath);
+                IsNextStepEnabled = true;
+            }
+            else
+            {
+                fileDroppedCorrectly = false;
             }
         }
 
@@ -177,9 +170,17 @@ namespace SEiED_1.ViewModel
         private void LoadFile(string filePath)
         {
             rules = Parser.Parse(filePath);
-            FactsToBool(rules);
-            //TODO: Why this stupid binding not working????
-            IsNextStepEnabled = true;
+            SetUnknownFacts(rules);
+        }
+
+        /// <summary>
+        /// Set "niedopytywalne" fakty IsKnown to false
+        /// </summary>
+        /// <param name="rules"></param>
+        private void SetUnknownFacts(List<Rule> rules)
+        {
+            var unknownFacts = Inference.factsThatAreAlsoConclusions(rules);
+            unknownFacts.Select(uf => { uf.IsKnown = false; return uf; }).ToList();
         }
 
         StackPanel stackPanel;
@@ -205,7 +206,7 @@ namespace SEiED_1.ViewModel
             {
                 foreach (Fact fact in rule.Facts)
                 {
-                    if (CheckFact(fact.Name))
+                    if (CheckFact(fact.Name) && !tmpFacts.Any(f => f.Name==fact.Name))
                     {
                         CheckBox cb = new CheckBox();
                         cb.IsChecked = fact.Value;
@@ -221,8 +222,6 @@ namespace SEiED_1.ViewModel
                     stackPanel1.Children.Add(cb);
 
                     tmpConclusions.Add(conclusion);
-                    
-                    //Conclusions += conclusion.Name + "=" + conclusion.Value.ToString() + '\n';
                 }
             }
             Facts = new List<Fact>(tmpFacts);
@@ -235,14 +234,19 @@ namespace SEiED_1.ViewModel
             rules[0].Facts[0].Value = true;
             rules[0].Facts[1].Value = false;
             rules[0].Facts[2].Value = true;
-            rules[1].Facts[0].Value = false;
-            //rules[1].Facts[1].Value = true;
-
+            rules[2].Facts[0].Value = false;
             return;
         }
 
         
-
+        /// <summary>
+        /// Check if fact is not also a conclusion
+        /// In such a situation, fact is "niedopytywalny"
+        /// Taht means, that user should be unable
+        /// to change its (this fact) logic value
+        /// </summary>
+        /// <param name="it"></param>
+        /// <returns></returns>
         private bool CheckFact(string it)
         {
             foreach (Rule rule in rules)
