@@ -180,7 +180,12 @@ namespace SEiED_1.ViewModel
         private void SetUnknownFacts(List<Rule> rules)
         {
             var unknownFacts = Inference.factsThatAreAlsoConclusions(rules);
-            unknownFacts.Select(uf => { uf.IsKnown = false; return uf; }).ToList();
+            unknownFacts.Select(uf =>
+            {
+                uf.IsKnown = false;
+                uf.IsSet = false;
+                return uf;
+            }).ToList();
         }
 
         StackPanel stackPanel;
