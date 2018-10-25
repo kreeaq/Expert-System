@@ -154,10 +154,14 @@ namespace SEiED_1.ViewModel
                     return;
                 }
                 WindowText = filePath;
-                fileDroppedCorrectly = true;
+                
                 LoadFile(filePath);
-                SetUnknownFacts(rules);
-                IsNextStepEnabled = true;
+                if (rules != null)
+                {
+                    SetUnknownFacts(rules);
+                    IsNextStepEnabled = true;
+                    fileDroppedCorrectly = true;
+                }
             }
             else
             {

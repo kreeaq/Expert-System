@@ -27,6 +27,11 @@ namespace SEiED_1.Classes
                 while (line != null)
                 {
                     line = line.Replace(" ", "");
+                    if (!line.Contains("->"))
+                    {
+                        MessageBox.Show("Knowledge database has wrong structure");
+                        return null;
+                    }
                     ruleID++;
                     Rule rule = new Rule
                     {
@@ -47,7 +52,7 @@ namespace SEiED_1.Classes
                         }
                         else
                         {
-                            rule.Facts.Add(rules.Where(r => r.Facts.FirstOrDefault(f => f.Name == it) != null).Select(r => r.Facts.Single(f => f.Name == it)).Single());
+                            rule.Facts.Add(rules.Where(r => r.Facts.FirstOrDefault(f => f.Name == it) != null).Select(r => r.Facts.First(f => f.Name == it)).First());
                         }                        
                     }
                     foreach (var it in splittedLine[1].Split(','))
@@ -63,12 +68,12 @@ namespace SEiED_1.Classes
                         else if (rules.Any(x => x.Facts.Any(f => f.Name == it)))
                         {
                             //Predicate that parser read as a Conclusion is already a Fact!
-                            rule.Conclusions.Add(rules.Where(r => r.Facts.FirstOrDefault(f => f.Name == it) != null).Select(r => r.Facts.Single(f => f.Name == it)).Single());
+                            rule.Conclusions.Add(rules.Where(r => r.Facts.FirstOrDefault(f => f.Name == it) != null).Select(r => r.Facts.First(f => f.Name == it)).First());
                         }
                         else if (rules.Any(r => r.Conclusions.Any(c => c.Name == it)))
                         {
                             //Predicate that parser read as a Conclusion is already a Conclusion somewhere!
-                            rule.Conclusions.Add(rules.Where(r => r.Conclusions.FirstOrDefault(c => c.Name == it) != null).Select(r => r.Conclusions.Single(c => c.Name == it)).Single());
+                            rule.Conclusions.Add(rules.Where(r => r.Conclusions.FirstOrDefault(c => c.Name == it) != null).Select(r => r.Conclusions.First(c => c.Name == it)).First());
                         }
                     }
                     //Add rule to rules
