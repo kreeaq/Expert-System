@@ -42,7 +42,7 @@ namespace SEiED_1.Classes
                 {
                     //Sprawdz czy regula jest wykonywalna
                     bool result = true;
-                    foreach (Fact fact in rule.Facts)
+                    foreach (Predicate fact in rule.Facts)
                     {
                         if (fact.IsKnown)
                         {
@@ -62,7 +62,7 @@ namespace SEiED_1.Classes
                         break;
                     }
 
-                    foreach (Conclusion conclusion in rule.Conclusions)
+                    foreach (Predicate conclusion in rule.Conclusions)
                     {
                         conclusion.Value = result;
                         //Find facts with similar name to conclusion

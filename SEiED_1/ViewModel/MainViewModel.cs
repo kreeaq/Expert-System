@@ -57,9 +57,9 @@ namespace SEiED_1.ViewModel
             }
         }
 
-        private List<Fact> _facts;
+        private List<Predicate> _facts;
 
-        public List<Fact> Facts
+        public List<Predicate> Facts
         {
             get { return _facts; }
             set
@@ -69,9 +69,9 @@ namespace SEiED_1.ViewModel
             }
         }
 
-        private List<Conclusion> _conclusions;
+        private List<Predicate> _conclusions;
 
-        public List<Conclusion> Conclusions
+        public List<Predicate> Conclusions
         {
             get { return _conclusions; }
             set
@@ -200,11 +200,11 @@ namespace SEiED_1.ViewModel
             };
 
 
-            List<Fact> tmpFacts = new List<Fact>();
-            List<Conclusion> tmpConclusions= new List<Conclusion>();
+            List<Predicate> tmpFacts = new List<Predicate>();
+            List<Predicate> tmpConclusions= new List<Predicate>();
             foreach (Rule rule in rules)
             {
-                foreach (Fact fact in rule.Facts)
+                foreach (Predicate fact in rule.Facts)
                 {
                     if (CheckFact(fact.Name) && !tmpFacts.Any(f => f.Name==fact.Name))
                     {
@@ -215,7 +215,7 @@ namespace SEiED_1.ViewModel
                         tmpFacts.Add(fact);
                     }
                 }
-                foreach (Conclusion conclusion in rule.Conclusions)
+                foreach (Predicate conclusion in rule.Conclusions)
                 {
                     CheckBox cb = new CheckBox();
                     cb.IsChecked = conclusion.Value;
@@ -224,8 +224,8 @@ namespace SEiED_1.ViewModel
                     tmpConclusions.Add(conclusion);
                 }
             }
-            Facts = new List<Fact>(tmpFacts);
-            Conclusions = new List<Conclusion>(tmpConclusions);
+            Facts = new List<Predicate>(tmpFacts);
+            Conclusions = new List<Predicate>(tmpConclusions);
         }
 
 
@@ -243,7 +243,7 @@ namespace SEiED_1.ViewModel
         {
             foreach (Rule rule in rules)
             {
-                foreach(Conclusion conclusion in rule.Conclusions)
+                foreach(Predicate conclusion in rule.Conclusions)
                 {
                     if (conclusion.Name == it)
                         return false;
