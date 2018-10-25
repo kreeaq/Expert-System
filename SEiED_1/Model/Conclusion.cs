@@ -8,6 +8,10 @@ namespace SEiED_1.Model
 {
     public class Conclusion : Predicate
     {
-        public bool IsKnown { get; set; } = true;
+        public Conclusion()
+        {
+            IsKnown = false;
+            IsSet = false;
+        }
     }
 }

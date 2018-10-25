@@ -10,5 +10,7 @@ namespace SEiED_1.Model
     {
         public string Name { get; set; }
         public bool Value { get; set; } = false;
+        public bool IsKnown { get; set; }
+        public bool IsSet { get; set; }
     }
 }

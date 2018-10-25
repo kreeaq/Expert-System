@@ -8,6 +8,10 @@ namespace SEiED_1.Model
 {
     public class Fact : Predicate
     {
-        public bool IsKnown { get; set; } = true;
+        public Fact()
+        {
+            IsKnown = true;
+            IsSet = true;
+        }
     }
 }
