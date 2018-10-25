@@ -1,0 +1,13 @@
+ProblemCiagly -> OptymalizacjaCiagla
+ProblemDyskretny -> OptymalizacjaDyskretna
+OgraniczenieWPostaciRownanStanu, DodatkoweOgraniczenia -> OptymalizacjaZOgraniczeniami
+BezOgraniczenia -> OptymalizacjaBezOgraniczen
+PoszukiwanieEkstremumFunkcji -> OptymalizacjaStatyczna
+PoszukiwanieEkstremumFunkcjonalu -> OptymalizacjaDynamiczna
+OptymalizacjaCiagla, OptymalizacjaDynamiczna, OgraniczenieWPostaciRownanStanu -> ZerowanieSieRozniczkiFunkcjonaluLangrangea
+OptymalizacjaCiagla, OptymalizacjaDynamiczna, OptymalizacjaZOgraniczeniami -> ZasadaMaksimumPontriagina
+OptymalizacjaDyskretna, OgraniczenieWPostaciRownanStanu, OptymalizacjaDynamiczna -> MetodaGradientuProstegoWPrzestrzeniSterowan
+OptymalizacjaDyskretna, OgraniczenieWPostaciRownanStanu, DodatkoweOgraniczenia -> MetodaPrzesuwnegoFunkcjonaluKary
+OptymalizacjaDyskretna, OgraniczenieWPostaciRownanStanu -> ProsteMetodyStrzalow
+OptymalizacjaCiagla, OptymalizacjaDynamiczna, OptymalizacjaBezOgraniczen -> AnalityczneMetodyRozwiazywaniaZadanOptymalizacji
+OptymalizacjaCiagla, OptymalizacjaDynamiczna, DodatkoweOgraniczenia -> AnalityczneMetodyRozwiazywaniaZadanOptymalizacji

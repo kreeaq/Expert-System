@@ -143,5 +143,8 @@
   <ItemGroup>
     <Resource Include="Resources\BazaWiedzy.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\KnowledgeDatabase.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
