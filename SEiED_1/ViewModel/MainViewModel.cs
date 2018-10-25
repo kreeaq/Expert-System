@@ -194,6 +194,7 @@ namespace SEiED_1.ViewModel
         private void StartProcess()
         {
             Inference.Calculate(rules);
+            Inference.UnsetUnknownFacts(rules);
             stackPanel = new StackPanel
             {  
                 Orientation = Orientation.Vertical

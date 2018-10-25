@@ -78,6 +78,21 @@ namespace SEiED_1.Classes
             }
             while (rules.Where(r => r.ToSkip == true).Count() > 0);
         }
-       
+
+        public static void UnsetUnknownFacts(List<Rule> rules)
+        {
+            //foreach (Rule rule in rules)
+            //{
+            //    foreach (Predicate fact in rule.Facts)
+            //    {
+            //        if (!fact.IsKnown)
+            //        {
+            //            fact.IsSet = false;
+            //        }
+            //    }
+            //}
+            //All that code in one line:
+            rules.ForEach(r => r.Facts.Where(f => !f.IsKnown).ToList().ForEach(uf => uf.IsSet = false));
+        }
     }
 }
