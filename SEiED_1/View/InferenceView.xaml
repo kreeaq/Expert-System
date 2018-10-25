@@ -31,7 +31,7 @@
         <Label Grid.Row="1" Grid.Column="0" Content="Facts:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <Label Grid.Row="1" Grid.Column="1" Content="Conclusions:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <ItemsControl x:Name="FactsStack" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch"  ItemsSource="{Binding Facts, Mode=TwoWay}">
+        <ItemsControl x:Name="FactsStack" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch"  ItemsSource="{Binding Facts, Mode=TwoWay}" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -45,20 +45,24 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
-        <ItemsControl x:Name="ConclusionsStack" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" HorizontalAlignment="Stretch"  ItemsSource="{Binding Conclusions, Mode=TwoWay}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="100" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="{Binding Path=Name}"/>
-                        <CheckBox Grid.Column="1" IsChecked="{Binding Path=Value, Mode=TwoWay}" IsEnabled="False"/>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        
+        <ScrollViewer IsEnabled="True" Visibility="Visible" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" MaxHeight="200">
+            <StackPanel CanVerticallyScroll="True"  Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" HorizontalAlignment="Stretch">
+                <ItemsControl x:Name="ConclusionsStack" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" HorizontalAlignment="Stretch"  ItemsSource="{Binding Conclusions, Mode=TwoWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="{Binding Path=Name}"/>
+                                <CheckBox Grid.Column="1" IsChecked="{Binding Path=Value, Mode=TwoWay}" IsEnabled="False"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>
