@@ -35,45 +35,45 @@ namespace SEiED_1.Classes
 
         public static void Calculate(List<Rule> rules)
         {
-            bool shouldBreak = false;
             do
             {
                 foreach (Rule rule in rules)
                 {
-                    //Sprawdz czy regula jest wykonywalna
                     bool result = true;
                     foreach (Predicate fact in rule.Facts)
                     {
-                        if (fact.IsKnown)
+                        //Check if rule has only SetFacts
+                        if (fact.IsSet)
                         {
                             result = result && fact.Value;
+                            rule.ToSkip = false;
                         }
                         else
                         {
                             rule.ToSkip = true;
-                            shouldBreak = true;
                             break; 
                         }
                     }
 
-                    if (shouldBreak)
+                    if (rule.ToSkip)
                     {
-                        shouldBreak = false;
-                        break;
+                        continue;
                     }
 
                     foreach (Predicate conclusion in rule.Conclusions)
                     {
                         conclusion.Value = result;
+                        conclusion.IsSet = true;
                         //Find facts with similar name to conclusion
-                        List<Fact> tmp = factsThatAreAlsoConclusions(rules);
+                        List<Fact> tmp = factsThatAreAlsoConclusions(rules).Where(f => f.Name == conclusion.Name).ToList();
                         if(tmp.Count > 0)
                         {
                             Fact exactFact = tmp.Where(c => c.Name == conclusion.Name).Single();
+                            //And set its value to the result from inference
                             exactFact.Value = result;
+                            exactFact.IsSet = true;
                         }                        
                     }
-                    rule.ToSkip = false;
                 }
             }
             while (rules.Where(r => r.ToSkip == true).Count() > 0);
