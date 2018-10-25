@@ -156,6 +156,7 @@ namespace SEiED_1.ViewModel
                 WindowText = filePath;
                 fileDroppedCorrectly = true;
                 LoadFile(filePath);
+                SetUnknownFacts(rules);
                 IsNextStepEnabled = true;
             }
             else
@@ -170,7 +171,6 @@ namespace SEiED_1.ViewModel
         private void LoadFile(string filePath)
         {
             rules = Parser.Parse(filePath);
-            SetUnknownFacts(rules);
         }
 
         /// <summary>
