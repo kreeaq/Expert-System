@@ -228,15 +228,7 @@ namespace SEiED_1.ViewModel
             Conclusions = new List<Conclusion>(tmpConclusions);
         }
 
-        private void FactsToBool(List<Rule> rules)
-        {
-            //TODO: Apply boolean values to facts
-            rules[0].Facts[0].Value = true;
-            rules[0].Facts[1].Value = false;
-            rules[0].Facts[2].Value = true;
-            rules[2].Facts[0].Value = false;
-            return;
-        }
+
 
         
         /// <summary>
